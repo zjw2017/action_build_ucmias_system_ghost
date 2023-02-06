@@ -1,0 +1,30 @@
+name: 123pan && OneDrive - T - erofs
+on:
+  workflow_dispatch:
+    inputs:
+      URL:
+        description: "待操作的系统包下载地址"
+        required: true
+      custom_version:
+        description: "待打包的版本号"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        device:
+          - umi
+          - cmi
+          - cas
+    steps:
+      - name: 下载环境包
+        uses: actions/checkout@v3
+        with:
+          repository: zjw2017/action_build_ucmi_system
+          token: ${{ secrets.TOKEN }}
+          path: action_build_ucmi_system
+      - name: 构建
+        run: |
+          bash ./action_build_ucmi_system/build_local.sh ${{ github.event.inputs.URL }} $device ${{ github.event.inputs.custom_version }}
+        env:
+          device: ${{ matrix.device }}
